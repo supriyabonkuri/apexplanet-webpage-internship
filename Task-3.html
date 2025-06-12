@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task 3 - ApexPlanet Internship</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    header {
+      background-color: #4CAF50;
+      color: white;
+      text-align: center;
+      padding: 1em 0;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    section {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        font-size: 14px;
+      }
+    }
+
+    .carousel img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .quiz-option {
+      display: block;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Task 3 - Responsive Quiz, Carousel and API</h1>
+  </header>
+
+  <div class="container">
+    <!-- Quiz Section -->
+    <section>
+      <h2>Quiz</h2>
+      <div id="quiz">
+        <p id="question"></p>
+        <div id="options"></div>
+        <button onclick="nextQuestion()">Next</button>
+        <p id="score"></p>
+      </div>
+    </section>
+
+    <!-- Carousel Section -->
+    <section class="carousel">
+      <h2>Image Carousel</h2>
+      <img id="carousel-img" src="https://via.placeholder.com/400x200?text=Image+1" alt="Carousel Image">
+      <div class="carousel-controls">
+        <button onclick="prevImage()">Prev</button>
+        <button onclick="nextImage()">Next</button>
+      </div>
+    </section>
+
+    <!-- API Section -->
+    <section>
+      <h2>Joke Generator</h2>
+      <button onclick="getJoke()">Get a Joke</button>
+      <p id="joke"></p>
+    </section>
+  </div>
+
+  <script>
+    // Quiz Logic
+    const quizData = [
+      { question: "What does HTML stand for?", options: ["HyperText Markup Language", "Hot Mail", "How to Make Lasagna"], answer: 0 },
+      { question: "What does CSS stand for?", options: ["Computer Style Sheets", "Cascading Style Sheets", "Colorful Style Sheets"], answer: 1 },
+      { question: "Which language is used for web apps?", options: ["PHP", "Python", "JavaScript"], answer: 2 }
+    ];
+
+    let currentQ = 0, score = 0;
+
+    function loadQuestion() {
+      const q = quizData[currentQ];
+      document.getElementById("question").innerText = q.question;
+      const optionsContainer = document.getElementById("options");
+      optionsContainer.innerHTML = "";
+      q.options.forEach((opt, i) => {
+        optionsContainer.innerHTML += `<label class='quiz-option'><input type='radio' name='option' value='${i}'> ${opt}</label>`;
+      });
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector("input[name='option']:checked");
+      if (!selected) return alert("Please select an option");
+      if (parseInt(selected.value) === quizData[currentQ].answer) score++;
+      currentQ++;
+      if (currentQ < quizData.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("quiz").innerHTML = `Quiz finished! Your score is ${score}/${quizData.length}`;
+      }
+    }
+
+    loadQuestion();
+
+    // Carousel Logic
+    const images = [
+      "https://via.placeholder.com/400x200?text=Image+1",
+      "https://via.placeholder.com/400x200?text=Image+2",
+      "https://via.placeholder.com/400x200?text=Image+3"
+    ];
+    let currentImg = 0;
+
+    function showImage() {
+      document.getElementById("carousel-img").src = images[currentImg];
+    }
+
+    function nextImage() {
+      currentImg = (currentImg + 1) % images.length;
+      showImage();
+    }
+
+    function prevImage() {
+      currentImg = (currentImg - 1 + images.length) % images.length;
+      showImage();
+    }
+
+    // API Fetch
+    function getJoke() {
+      fetch("https://official-joke-api.appspot.com/random_joke")
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("joke").innerText = `${data.setup} - ${data.punchline}`;
+        });
+    }
+  </script>
+</body>
+</html>
